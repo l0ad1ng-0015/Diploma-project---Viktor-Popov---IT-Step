@@ -1,0 +1,23 @@
+[
+	{
+		"id": "p1",
+		"title": "Мини чаша",
+		"price": 9.9,
+		"image": "/img/products/cup.jpg",
+		"description": "Малка керамична чаша за кафе."
+	},
+	{
+		"id": "p2",
+		"title": "Тефтер А6",
+		"price": 6.5,
+		"image": "/img/products/notebook.jpg",
+		"description": "Компактен тефтер с меки корици."
+	},
+	{
+		"id": "p3",
+		"title": "Ключодържател",
+		"price": 4.0,
+		"image": "/img/products/keyring.jpg",
+		"description": "Метален ключодържател с халка."
+	}
+]
