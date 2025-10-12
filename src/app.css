@@ -24,7 +24,7 @@ a {
 
 /* --- Контейнер и основна рамка --- */
 .container {
-	width: min(100%, 1000px);
+	width: min(100%, 1200px);
 	margin: 0 auto;
 	padding: 16px;
 }
@@ -33,6 +33,12 @@ main.container {
 }
 
 /* --- Хедър / футър --- */
+.site-header {
+	position: sticky;
+	top: 0;
+	z-index: 10;
+}
+
 .site-header,
 .site-footer {
 	background: #f6f6f6;

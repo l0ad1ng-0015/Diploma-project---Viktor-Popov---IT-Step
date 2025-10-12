@@ -46,6 +46,7 @@
 				<input name="address" type="text" required />
 			</div>
 		</div>
+
 		<div class="row">
 			<div>
 				<label>Бележки (по избор)</label>
@@ -53,7 +54,20 @@
 			</div>
 		</div>
 
-		<!-- Скриваме артикулите и сумата като JSON стрингове, за да стигнат до сървъра -->
+		<!-- Метод на плащане -->
+		<div class="row">
+			<div>
+				<label>Метод на плащане</label>
+				<div style="display:flex; gap:12px; align-items:center;">
+					<label><input type="radio" name="paymethod" value="cod" checked /> Наложен платеж</label>
+					<label
+						><input type="radio" name="paymethod" value="card" /> Карта (Visa/Mastercard – Stripe test)</label
+					>
+				</div>
+			</div>
+		</div>
+
+		<!-- артикули и сума -->
 		<input type="hidden" name="items" value={JSON.stringify($cart)} />
 		<input type="hidden" name="total" value={$totalPrice} />
 

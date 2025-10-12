@@ -1,10 +1,9 @@
 import type { Actions } from './$types';
-import { fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 
 type CartItem = { id: string; title: string; price: number; qty: number; image: string };
 
 function uuid() {
-	// прост и достатъчен за проекта
 	return 'oid-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
 }
 
@@ -17,6 +16,7 @@ export const actions: Actions = {
 		const email = String(fd.get('email') || '').trim();
 		const address = String(fd.get('address') || '').trim();
 		const notes = String(fd.get('notes') || '').trim();
+		const paymethod = String(fd.get('paymethod') || 'cod');
 
 		const itemsRaw = String(fd.get('items') || '[]');
 		const totalRaw = String(fd.get('total') || '0');
@@ -42,23 +42,40 @@ export const actions: Actions = {
 			id: uuid(),
 			items,
 			total,
-			customer: { name, phone, email, address, notes },
+			customer: { name, phone, email, address, notes, paymethod },
 			createdAt: new Date().toISOString()
 		};
 
-		// Изпращаме към вътрешния API, който говори с Telegram
-		const res = await fetch('/api/order', {
+		// Телеграм – пращаме винаги (за дипломната е достатъчно)
+		// ако е карта, отбелязваме "Stripe – pending"
+		const tgRes = await fetch('/api/order', {
 			method: 'POST',
 			headers: { 'content-type': 'application/json' },
 			body: JSON.stringify(order)
-		});
+		}).catch(() => null);
 
-		if (!res.ok) {
-			const txt = await res.text().catch(() => '');
-			console.error('Telegram error:', txt);
-			return fail(500, { message: 'Поръчката не можа да се изпрати. Опитай отново.' });
+		// Ако е наложен платеж: приключваме локално с успех
+		if (paymethod === 'cod') {
+			return { success: true, orderId: order.id };
 		}
 
-		return { success: true, orderId: order.id };
+		// Ако е карта: правим Stripe session и пренасочваме
+		// (при успех на плащането Stripe ще ни върне към /checkout/success)
+		const pay = await fetch('/api/pay/create-session', {
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify({ order })
+		});
+
+		if (!pay.ok) {
+			const txt = await pay.text().catch(() => '');
+			console.error('Stripe session failed:', txt);
+			return fail(500, { message: 'Проблем при стартиране на плащането. Опитай отново.' });
+		}
+
+		const { url } = await pay.json();
+		if (!url) return fail(500, { message: 'Липсва URL за плащане.' });
+
+		throw redirect(303, url);
 	}
 };

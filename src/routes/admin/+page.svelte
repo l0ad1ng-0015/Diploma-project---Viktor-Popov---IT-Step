@@ -12,6 +12,38 @@
 	} from '$lib/storage/productsLocal';
 	import { onMount } from 'svelte';
 
+	// панел за администратор (логин)
+	// потребителско име: Admin
+	// парола: Admin123
+	let isLoggedIn = false;
+	let username = '';
+	let password = '';
+	let rememberMe = false;
+
+	const ADMIN_USERNAME = 'Admin';
+	const ADMIN_PASSWORD = 'Admin123';
+
+	// Логика за вход
+	function handleLogin() {
+		if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+			isLoggedIn = true;
+
+			// Запазване на данни за вход в localStorage, ако е избрано "Запомни ме"
+			if (rememberMe) {
+				localStorage.setItem('isLoggedIn', 'true');
+			}
+		} else {
+			alert('Грешно потребителско име или парола!');
+		}
+	}
+
+	// Проверка дали потребителят вече е логнат
+	onMount(() => {
+		if (localStorage.getItem('isLoggedIn') === 'true') {
+			isLoggedIn = true;
+		}
+	});
+
 	let products: Product[] = [];
 	let adds: Product[] = [];
 	let removals: string[] = [];
@@ -88,102 +120,171 @@
 	$: hiddenDefaults = (productsDefault as Product[]).filter((d) => removals.includes(d.id));
 </script>
 
-<h1>Админ панел</h1>
+{#if !isLoggedIn}
+	<div class="login-form">
+		<h2 style="margin-bottom: 20px">Админ страница</h2>
+		<input type="text" placeholder="Потребителско име" bind:value={username} />
+		<input type="password" placeholder="Парола" bind:value={password} />
+		<label>
+			<input type="checkbox" bind:checked={rememberMe} />
+			Запомни ме
+		</label>
+		<button on:click={handleLogin}>Вход</button>
+	</div>
+{:else}
+	<h1>Админ панел</h1>
 
-<!-- Видими продукти -->
-<section class="card" style="padding:16px; margin-bottom:16px;">
-	<h2>Видими продукти</h2>
-	{#if products.length === 0}
-		<p>Няма видими продукти.</p>
-	{:else}
-		<div class="grid">
-			{#each products as p}
-				<article class="item card">
-					<div class="thumb">
-						{#if p.image}<img src={p.image} alt={p.title} />
-						{:else}<div class="ph">Без снимка</div>{/if}
-					</div>
-					<div class="body">
-						<div class="meta">
-							<strong>{p.title}</strong>
-							<span class="price">{p.price.toFixed(2)} лв.</span>
+	<!-- Видими продукти -->
+	<section class="card" style="padding:16px; margin-bottom:16px;">
+		<h2>Видими продукти</h2>
+		{#if products.length === 0}
+			<p>Няма видими продукти.</p>
+		{:else}
+			<div class="grid">
+				{#each products as p}
+					<article class="item card">
+						<div class="thumb">
+							{#if p.image}<img src={p.image} alt={p.title} />
+							{:else}<div class="ph">Без снимка</div>{/if}
 						</div>
-						<div class="badges">
-							{#if isDefault(p.id)}<span class="badge">дефолтен</span>{/if}
-							{#if isAdded(p.id)}<span class="badge added">добавен</span>{/if}
+						<div class="body">
+							<div class="meta">
+								<strong>{p.title}</strong>
+								<span class="price">{p.price.toFixed(2)} лв.</span>
+							</div>
+							<div class="badges">
+								{#if isDefault(p.id)}<span class="badge">дефолтен</span>{/if}
+								{#if isAdded(p.id)}<span class="badge added">добавен</span>{/if}
+							</div>
+							<div class="actions">
+								{#if isAdded(p.id)}
+									<button class="btn danger" on:click={() => removeAdded(p.id)}
+										>Изтрий добавения</button
+									>
+								{:else if isDefault(p.id)}
+									<button class="btn" on:click={() => hide(p.id)}>Скрий</button>
+								{/if}
+							</div>
 						</div>
-						<div class="actions">
-							{#if isAdded(p.id)}
-								<button class="btn danger" on:click={() => removeAdded(p.id)}
-									>Изтрий добавения</button
-								>
-							{:else if isDefault(p.id)}
-								<button class="btn" on:click={() => hide(p.id)}>Скрий</button>
-							{/if}
-						</div>
-					</div>
-				</article>
-			{/each}
-		</div>
-	{/if}
-</section>
+					</article>
+				{/each}
+			</div>
+		{/if}
+	</section>
 
-<!-- Скрити дефолтни -->
-<section class="card" style="padding:16px; margin-bottom:16px;">
-	<h2>Скрити дефолтни продукти</h2>
-	{#if hiddenDefaults.length === 0}
-		<p>Няма скрити дефолтни продукти.</p>
-	{:else}
-		<ul>
-			{#each hiddenDefaults as p}
-				<li>
-					<strong>{p.title}</strong> — {p.price.toFixed(2)} лв.
-					<button class="btn" style="margin-left:8px;" on:click={() => unhide(p.id)}
-						>Възстанови</button
-					>
-				</li>
-			{/each}
-		</ul>
-	{/if}
-</section>
+	<!-- Скрити дефолтни -->
+	<section class="card" style="padding:16px; margin-bottom:16px;">
+		<h2>Скрити дефолтни продукти</h2>
+		{#if hiddenDefaults.length === 0}
+			<p>Няма скрити дефолтни продукти.</p>
+		{:else}
+			<ul>
+				{#each hiddenDefaults as p}
+					<li>
+						<strong>{p.title}</strong> — {p.price.toFixed(2)} лв.
+						<button class="btn" style="margin-left:8px;" on:click={() => unhide(p.id)}
+							>Възстанови</button
+						>
+					</li>
+				{/each}
+			</ul>
+		{/if}
+	</section>
 
-<!-- Добавяне на продукт -->
-<section class="card" style="padding:16px;">
-	<h2>Добавяне на нов продукт</h2>
-	<form class="form" on:submit|preventDefault={handleAdd}>
-		<div class="row two">
-			<div>
-				<label>ID (по избор)</label>
-				<input type="text" bind:value={customId} placeholder="ако оставиш празно, ще се генерира" />
+	<!-- Добавяне на продукт -->
+	<section class="card" style="padding:16px;">
+		<h2>Добавяне на нов продукт</h2>
+		<form class="form" on:submit|preventDefault={handleAdd}>
+			<div class="row two">
+				<div>
+					<label>ID (по избор)</label>
+					<input
+						type="text"
+						bind:value={customId}
+						placeholder="ако оставите празно, ще се генерира"
+					/>
+				</div>
+				<div>
+					<label>Цена*</label>
+					<input type="text" bind:value={price} placeholder="напр. 12.50" required />
+				</div>
 			</div>
-			<div>
-				<label>Цена*</label>
-				<input type="text" bind:value={price} placeholder="напр. 12.50" required />
+			<div class="row">
+				<div>
+					<label>Заглавие*</label>
+					<input type="text" bind:value={title} required />
+				</div>
 			</div>
-		</div>
-		<div class="row">
-			<div>
-				<label>Заглавие*</label>
-				<input type="text" bind:value={title} required />
+			<div class="row">
+				<div>
+					<label>Снимка (URL)</label>
+					<input type="text" bind:value={image} placeholder="/img/products/..." />
+				</div>
 			</div>
-		</div>
-		<div class="row">
-			<div>
-				<label>Снимка (URL)</label>
-				<input type="text" bind:value={image} placeholder="/img/products/..." />
+			<div class="row">
+				<div>
+					<label>Описание</label>
+					<textarea bind:value={description}></textarea>
+				</div>
 			</div>
-		</div>
-		<div class="row">
-			<div>
-				<label>Описание</label>
-				<textarea bind:value={description}></textarea>
-			</div>
-		</div>
-		<button class="btn" type="submit">Добави</button>
-	</form>
-</section>
+			<button class="btn" type="submit">Добави</button>
+		</form>
+	</section>
+{/if}
 
 <style>
+	.login-form {
+		max-width: 340px;
+		margin: 60px auto 0 auto;
+		padding: 32px 24px;
+		background: #fff;
+		border-radius: 12px;
+		box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	.login-form h2 {
+		text-align: center;
+		font-size: 1.5em;
+		margin-bottom: 20px;
+	}
+
+	.login-form input[type='text'],
+	.login-form input[type='password'] {
+		width: 100%;
+		padding: 10px;
+		border: 1px solid #ccc;
+		border-radius: 6px;
+		font-size: 1em;
+		margin-bottom: 8px;
+	}
+
+	.login-form label {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-size: 0.98em;
+		margin-bottom: 8px;
+	}
+
+	.login-form button {
+		width: 100%;
+		padding: 10px;
+		background: #2a7;
+		color: #fff;
+		border: none;
+		border-radius: 6px;
+		font-size: 1em;
+		cursor: pointer;
+		transition: background 0.2s;
+	}
+
+	.login-form button:hover {
+		background: #238a5e;
+	}
+
 	.grid {
 		display: grid;
 		grid-template-columns: 1fr;
