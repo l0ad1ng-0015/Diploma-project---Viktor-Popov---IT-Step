@@ -1,3 +1,5 @@
+// Файл: faq.ts
+
 // въпроси/faq за чат бот
 export type FAQ = {
 	id: string;
@@ -346,6 +348,7 @@ export const FAQS: FAQ[] = [
 	}
 ];
 
+// примерни въпроси за чат бота
 export const EXAMPLE_QUESTIONS: string[] = [
 	'Как да поръчам?',
 	'Колко струва доставката?',

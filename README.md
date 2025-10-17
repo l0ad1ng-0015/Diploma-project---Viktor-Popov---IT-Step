@@ -1,3 +1,5 @@
+# ТОЗИ ФАЙЛ НЕ СЕ ОТНАСЯ ЗА IT STEP
+
 # sv
 
 Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).

@@ -1,3 +1,7 @@
+// Файл: create-session/+server.ts
+// Описание: Сървърна логика за създаване на Stripe плащане сесия.
+// Получава поръчка, създава Stripe сесия и връща URL за плащане.
+
 import type { RequestHandler } from './$types';
 import Stripe from 'stripe';
 import { STRIPE_SECRET_KEY, STRIPE_SUCCESS_URL, STRIPE_CANCEL_URL } from '$env/static/private';
@@ -29,7 +33,6 @@ export const POST: RequestHandler = async ({ request }) => {
 			}));
 
 		if (!line_items.length) {
-			// fallback (не би трябвало да се стига)
 			if (!order.total || order.total <= 0) {
 				console.error('[stripe] empty items and non-positive total', order);
 				return new Response(JSON.stringify({ error: 'empty_line_items' }), { status: 400 });

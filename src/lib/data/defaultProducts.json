@@ -3,21 +3,42 @@
 		"id": "p1",
 		"title": "Мини чаша",
 		"price": 9.9,
-		"image": "/img/products/cup.jpg",
+		"image": "/default-products/mini-cup.png",
 		"description": "Малка керамична чаша за кафе."
 	},
 	{
 		"id": "p2",
 		"title": "Тефтер А6",
 		"price": 6.5,
-		"image": "/img/products/notebook.jpg",
+		"image": "/default-products/notebook.png",
 		"description": "Компактен тефтер с меки корици."
 	},
 	{
 		"id": "p3",
 		"title": "Ключодържател",
 		"price": 4.0,
-		"image": "/img/products/keyring.jpg",
+		"image": "/default-products/keychain.png",
 		"description": "Метален ключодържател с халка."
+	},
+	{
+		"id": "p4",
+		"title": "Ръчно изработена свещ",
+		"price": 12.0,
+		"image": "/default-products/candle.png",
+		"description": "Ароматна свещ от соев восък с декорация."
+	},
+	{
+		"id": "p5",
+		"title": "Керамична купа",
+		"price": 15.5,
+		"image": "/default-products/bowl.png",
+		"description": "Ръчно изработена купа за салата."
+	},
+	{
+		"id": "p6",
+		"title": "Плетена гривна",
+		"price": 7.0,
+		"image": "/default-products/bracelet.png",
+		"description": "Гривна от памучна прежда с мъниста."
 	}
 ]

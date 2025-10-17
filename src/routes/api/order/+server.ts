@@ -1,3 +1,7 @@
+// Файл: Cart.svelte
+// Описание: телеграм известия за нови поръчки
+// Какво се изразява в telegram съобщението, глешки при изпращане и тн.
+
 import type { RequestHandler } from './$types';
 import { TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID } from '$env/static/private';
 
@@ -11,7 +15,7 @@ export const POST: RequestHandler = async ({ request }) => {
 	// какво се изразява в telegram
 	const lines: string[] = [];
 	lines.push(`🧾 Нова поръчка #${order.id}`);
-	lines.push(`Час: ${new Date(order.createdAt || Date.now()).toLocaleString('bg-BG')}`);
+	// lines.push(`Час: ${new Date(order.createdAt || Date.now()).toLocaleString('bg-BG')}`);
 	lines.push('');
 	lines.push('Клиент:');
 	lines.push(`• ${order.customer?.name}`);

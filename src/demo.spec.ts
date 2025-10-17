@@ -1,3 +1,5 @@
+// този файл е генериран автоматично от SvelteKit, няма нищо от мен :)
+
 import { describe, it, expect } from 'vitest';
 
 describe('sum test', () => {

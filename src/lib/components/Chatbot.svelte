@@ -1,13 +1,20 @@
+<!--  Файл: Chatbot.svelte
+ Описание: Мини чат-бот
+ Включва визуализация на чат прозорец, обработка на въпроси на user-а,
+ автоматично търсене на отговори от готово FAQ, примерни въпроси.
+-->
+
 <script lang="ts">
 	import { FAQS, EXAMPLE_QUESTIONS } from '$lib/faq';
 
 	type Msg = { from: 'bot' | 'user'; text: string };
 	let open = false;
 	let userInput = '';
-	let autoSend = false; // 🆕 ако е true – клик върху чип изпраща директно
+	let autoSend = false;
 
+	// начално съобщение от бота
 	let messages: Msg[] = [
-		{ from: 'bot', text: 'Здравей! Аз съм мини помощник. Попитай за доставка, плащане, връщане…' }
+		{ from: 'bot', text: 'Здравей! Аз съм мини помощник. Попитай за някой от примерните въпроси.' }
 	];
 
 	let bodyRef: HTMLDivElement | null = null;
@@ -20,6 +27,7 @@
 			.trim();
 	}
 
+	// търсене на най-подходящ FAQ
 	function matchFAQ(q: string) {
 		const norm = normalize(q);
 		if (!norm) return null;
@@ -40,6 +48,7 @@
 		return best ? FAQS[best.idx] : null;
 	}
 
+	// изпращане на отговор или съответно това, че няма отговор
 	function send() {
 		const q = userInput.trim();
 		if (!q) return;
@@ -68,14 +77,13 @@
 		}
 	}
 
-	// 🆕 клик върху готов въпрос
+	// избор на примерен въпрос
 	function pickSuggestion(q: string) {
 		if (autoSend) {
 			userInput = q;
 			send();
 		} else {
 			userInput = q;
-			// фокус в textarea би бил nice-to-have, но избягваме document.querySelector за SSR
 		}
 	}
 </script>
@@ -97,7 +105,7 @@
 			{/each}
 		</div>
 
-		<!-- 🆕 Примерни въпроси (чипове) -->
+		<!-- Примерни въпроси -->
 		<div class="cb-sugs">
 			{#each EXAMPLE_QUESTIONS as q}
 				<button class="chip" on:click={() => pickSuggestion(q)}>{q}</button>

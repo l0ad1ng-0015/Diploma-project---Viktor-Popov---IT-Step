@@ -1,9 +1,14 @@
+// Файл: productsLocal.ts
+// Описание: Управление на локално съхранение на продукти.
+// Използва се за добавени и премахнати продукти от user-а.
+
 import type { Product } from '$lib/types';
 import { browser } from '$app/environment';
 
 const KEY_ADDS = 'miniShop_adds';
 const KEY_REMOVALS = 'miniShop_removals';
 
+// връща списък с добавени продукти и премахнати продукти от localStorage
 export function getLocalAdds(): Product[] {
 	if (!browser) return [];
 	try {
@@ -12,6 +17,7 @@ export function getLocalAdds(): Product[] {
 		return [];
 	}
 }
+// връща списък с ID-та на премахнати продукти от localStorage
 export function getLocalRemovals(): string[] {
 	if (!browser) return [];
 	try {
@@ -21,6 +27,7 @@ export function getLocalRemovals(): string[] {
 	}
 }
 
+// записва добавен продукт или ъпдейтва съществуващ в localStorage
 export function saveAdd(p: Product) {
 	if (!browser) return;
 	const list = getLocalAdds();
@@ -47,6 +54,7 @@ export function saveUnremove(id: string) {
 	localStorage.setItem(KEY_REMOVALS, JSON.stringify(list));
 }
 
+// слива дефолтните продукти с добавените и премахнатите от user-а
 export function merge(defaults: Product[], adds: Product[], removals: string[]): Product[] {
 	const filtered = defaults.filter((d) => !removals.includes(d.id));
 	const map = new Map(filtered.map((p) => [p.id, p]));

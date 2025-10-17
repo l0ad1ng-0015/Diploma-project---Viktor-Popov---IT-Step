@@ -72,7 +72,7 @@
 		background-image: url('https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=1200&q=80');
 		background-size: cover;
 		background-position: center center;
-		margin-bottom: 60px;
+		margin-bottom: 50px;
 	}
 	.hero-overlay {
 		position: absolute;

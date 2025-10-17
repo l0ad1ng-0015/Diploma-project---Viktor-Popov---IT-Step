@@ -1,3 +1,8 @@
+<!-- Файл: cart/+page.svelte
+ Описание: Страница за количката на потребителя.
+ Включва списък с добавени продукти, управление на количествата и обща цена.
+-->
+
 <script lang="ts">
 	import { cart, totalPrice } from '$lib/stores/cart';
 	const remove = (id: string) => cart.remove(id);

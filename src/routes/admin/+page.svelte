@@ -1,3 +1,8 @@
+<!--  Файл: аdmin/+page.svelte
+ Описание: Административен панел за управление на продуктите
+ Включва добавяне, скриване и изтриване на продукти.
+-->
+
 <script lang="ts">
 	import productsDefault from '$lib/data/defaultProducts.json';
 	import type { Product } from '$lib/types';
@@ -28,7 +33,7 @@
 		if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
 			isLoggedIn = true;
 
-			// Запазване на данни за вход в localStorage, ако е избрано "Запомни ме"
+			// запазване на логин данните при натискане на Запомни ме,
 			if (rememberMe) {
 				localStorage.setItem('isLoggedIn', 'true');
 			}
@@ -48,7 +53,7 @@
 	let adds: Product[] = [];
 	let removals: string[] = [];
 
-	// форми за добавяне
+	// форми за добавяне на продукт
 	let title = '';
 	let price: number | string = '';
 	let image = '';
@@ -59,6 +64,7 @@
 		return 'p' + Date.now().toString(36);
 	}
 
+	// обновяване на списъка с продукти след релоуд на страницата или промяна
 	function refresh() {
 		adds = getLocalAdds();
 		removals = getLocalRemovals();
@@ -120,6 +126,7 @@
 	$: hiddenDefaults = (productsDefault as Product[]).filter((d) => removals.includes(d.id));
 </script>
 
+<!-- Логин форма -->
 {#if !isLoggedIn}
 	<div class="login-form">
 		<h2 style="margin-bottom: 20px">Админ страница</h2>

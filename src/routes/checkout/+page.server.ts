@@ -1,3 +1,8 @@
+// Файл: +page.server.ts
+// Описание: Обработва формуляра за поръчка на страницата за плащане.
+// Включва валидация на входните данни,
+// изпращане на поръчката към telegram и ни праща към Stripe.
+
 import type { Actions } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
 
@@ -46,27 +51,27 @@ export const actions: Actions = {
 			createdAt: new Date().toISOString()
 		};
 
-		// Телеграм – пращаме винаги (за дипломната е достатъчно)
-		// ако е карта, отбелязваме "Stripe – pending"
+		// изпращаме поръчката към Telegram
 		const tgRes = await fetch('/api/order', {
 			method: 'POST',
 			headers: { 'content-type': 'application/json' },
 			body: JSON.stringify(order)
 		}).catch(() => null);
 
-		// Ако е наложен платеж: приключваме локално с успех
+		// Ако е наложен платеж: приключваме поръчката с успех
 		if (paymethod === 'cod') {
 			return { success: true, orderId: order.id };
 		}
 
-		// Ако е карта: правим Stripe session и пренасочваме
-		// (при успех на плащането Stripe ще ни върне към /checkout/success)
+		// ако е карта, включваме stripe сесия и пренасочваме
+		// (при успех на плащането stripe ще ни пренасочи към succsess страницата (/checkout/success))
 		const pay = await fetch('/api/pay/create-session', {
 			method: 'POST',
 			headers: { 'content-type': 'application/json' },
 			body: JSON.stringify({ order })
 		});
 
+		// ако има грешка при създаването на сесията
 		if (!pay.ok) {
 			const txt = await pay.text().catch(() => '');
 			console.error('Stripe session failed:', txt);

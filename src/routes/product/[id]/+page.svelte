@@ -1,3 +1,8 @@
+<!-- Файл: product/[id]/+page.svelte
+Описание: Страница за отделен продукт.
+Показва детайли за продукта, включително снимка, описание, цена и форма за добавяне в количката.
+-->
+
 <script lang="ts">
 	import productsDefault from '$lib/data/defaultProducts.json';
 	import type { Product } from '$lib/types';
@@ -8,17 +13,19 @@
 	export let data: { id: string };
 
 	let product: Product | null = null;
+
+	// дефолтно количество
 	let qty = 1;
 
 	// първоначално – от дефолтните (работи и при SSR)
 	product = (productsDefault as Product[]).find((p) => p.id === data.id) || null;
 
-	// след mount – наложи локалните промени от „админ“
 	onMount(() => {
 		const merged = merge(productsDefault as Product[], getLocalAdds(), getLocalRemovals());
 		product = merged.find((p) => p.id === data.id) || null;
 	});
 
+	// добавяне в количката
 	function addToCart() {
 		if (product && qty > 0) cart.add(product, qty);
 	}
