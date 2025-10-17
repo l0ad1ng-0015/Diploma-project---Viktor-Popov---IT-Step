@@ -5,7 +5,7 @@
 -->
 
 <script lang="ts">
-	import { FAQS, EXAMPLE_QUESTIONS } from '$lib/faq';
+	import { FAQS, EXAMPLE_QUESTIONS } from '../faq';
 
 	type Msg = { from: 'bot' | 'user'; text: string };
 	let open = false;

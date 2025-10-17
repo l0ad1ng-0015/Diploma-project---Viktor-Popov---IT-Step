@@ -6,8 +6,8 @@
 
 <script lang="ts">
 	import '../app.css';
-	import { totalItems } from '$lib/stores/cart';
-	import Chatbot from '$lib/components/Chatbot.svelte';
+	import { totalItems } from '../lib/stores/cart';
+	import Chatbot from '../lib/components/Chatbot.svelte';
 	$: count = $totalItems;
 </script>
 

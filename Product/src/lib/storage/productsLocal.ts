@@ -2,7 +2,7 @@
 // Описание: Управление на локално съхранение на продукти.
 // Използва се за добавени и премахнати продукти от user-а.
 
-import type { Product } from '$lib/types';
+import type { Product } from '../types';
 import { browser } from '$app/environment';
 
 const KEY_ADDS = 'miniShop_adds';
